@@ -46,6 +46,25 @@
     (should (equal (bookmark-prop-get "Reading" 'agent-shell-bookmark-session) "session-42"))
     (should-not (bookmark-prop-get "Reading" 'filename))))
 
+(ert-deftest asb-config-makers-save-and-restore-bookmarks ()
+  (asb-test-with-shell
+    (agent-shell-bookmark-mode 1)
+    (dolist (entries (list
+                      (append (agent-shell-default-agent-config-makers)
+                              (list (lambda () asb-test-config)))
+                      (lambda () (list (lambda () asb-test-config)))))
+      (let ((agent-shell-agent-configs entries))
+        (set-buffer buffer)
+        (bookmark-set "Maker")
+        (switch-to-buffer (get-buffer-create "*scratch*"))
+        (bookmark-jump "Maker")
+        (should (eq buffer (current-buffer)))
+        (should (equal (bookmark-prop-get "Maker" 'agent-shell-bookmark-session)
+                       "session-42"))))
+    (let ((agent-shell-agent-configs
+           (list asb-test-config (lambda () asb-test-config))))
+      (should-error (agent-shell-bookmark-make-record) :type 'user-error))))
+
 (ert-deftest asb-restore-establishes-buffer-without-selecting-window ()
   (asb-test-with-shell
     (let ((record (agent-shell-bookmark-make-record))

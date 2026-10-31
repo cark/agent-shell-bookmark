@@ -9,7 +9,10 @@
     (let ((persist--directory-location (expand-file-name "persist" root))
           (bookmark-default-file (expand-file-name "bookmarks" root))
           (bookmark-alist nil) (bookmark-save-flag nil)
-          (activities-activities nil))
+          (activities-activities nil)
+          (agent-shell-agent-configs
+           (append (agent-shell-default-agent-config-makers)
+                   (list (lambda () config)))))
       (activities-mode 1)
       (activities-tabs-mode 1)
       (agent-shell-bookmark-mode 1)

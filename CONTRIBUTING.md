@@ -80,6 +80,10 @@ The public start API cannot suppress focus changes or stop resume fallback.
 The fragment API keeps failures in the conversation body across header redraws.
 That is why these few private calls are isolated here.
 
+Record lookup also uses `agent-shell--resolved-agent-configs` so upstream's
+default maker functions, explicit alists and dynamic lists work alike. Matching
+still requires exactly one configured agent with the saved identifier.
+
 A temporary client-maker wrapper installs the buffer-local guard before
 upstream can start asynchronous work. A synchronous startup failure kills the
 partially created shell. The wrapper stops arming when startup exits, so it

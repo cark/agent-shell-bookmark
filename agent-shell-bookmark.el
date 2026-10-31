@@ -31,7 +31,7 @@
 For example, IDENTIFIER can be the symbol `codex'."
   (let ((configs (seq-filter (lambda (config)
                                (eq identifier (map-elt config :identifier)))
-                             agent-shell-agent-configs)))
+                             (agent-shell--resolved-agent-configs))))
     (unless (= (length configs) 1)
       (user-error "Configure exactly one agent named %s before restoring" identifier))
     (car configs)))
