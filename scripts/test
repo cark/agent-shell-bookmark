@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+deps=${ASB_DEPS:-${XDG_CACHE_HOME:-$HOME/.cache}/agent-shell-bookmark/deps}
+paths=()
+for directory in "$deps"/*; do
+  [[ ! -d "$directory" ]] || paths+=(-L "$directory")
+done
+exec "${EMACS:-emacs}" -Q --batch "${paths[@]}" "$@" -L . -l tests/check.el

@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+deps=${ASB_DEPS:-${XDG_CACHE_HOME:-$HOME/.cache}/agent-shell-bookmark/deps}
+paths=()
+for directory in "$deps"/*; do
+  [[ ! -d "$directory" ]] || paths+=(-L "$directory")
+done
+profile=$(mktemp -d)
+trap 'rm -r -- "$profile"' EXIT
+ASB_TEST_PROFILE="$profile" "${EMACS:-emacs}" -Q --batch "${paths[@]}" "$@" -L . \
+  --eval '(setq user-emacs-directory (file-name-as-directory (getenv "ASB_TEST_PROFILE")))' \
+  -l tests/activities-tests.el

@@ -1,0 +1,6 @@
+*.elc
+*.eln
+__pycache__/
+.direnv/
+result
+result-*

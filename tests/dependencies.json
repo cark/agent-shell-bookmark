@@ -1,0 +1,18 @@
+{
+  "agent-shell": {
+    "url": "https://github.com/xenodium/agent-shell.git",
+    "rev": "a7f61c8c80634e1ab5e533322218c3b6ffa31b59"
+  },
+  "acp": {
+    "url": "https://github.com/xenodium/acp.el.git",
+    "rev": "2959da5fa8657da17a78ac6ceef303a50e3e69de"
+  },
+  "shell-maker": {
+    "url": "https://github.com/xenodium/shell-maker.git",
+    "rev": "b28ee61a2533e408ed180662f83bb84fc8f84ba6"
+  },
+  "package-lint": {
+    "url": "https://github.com/purcell/package-lint.git",
+    "rev": "1865be780a16098f972fef50a52b21ca6ee04df9"
+  }
+}

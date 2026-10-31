@@ -1,0 +1,14 @@
+#!/usr/bin/env python3
+"""Export only the tool definitions before Nix sees the checkout."""
+from pathlib import Path
+import shutil
+import subprocess
+import tempfile
+
+root = Path(__file__).resolve().parent.parent
+with tempfile.TemporaryDirectory(prefix="asb-shell-") as directory:
+    source = Path(directory) / "source"
+    source.mkdir()
+    for name in ("flake.nix", "flake.lock"):
+        shutil.copyfile(root / name, source / name)
+    subprocess.run(["nix", "store", "add-path", "--name", "agent-shell-bookmark-shell", str(source)], check=True)

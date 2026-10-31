@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+root=$(cd "$(dirname "$0")/.." && pwd)
+source=$("$root/scripts/nix-source")
+exec nix develop "path:$source" --no-write-lock-file "$@"
