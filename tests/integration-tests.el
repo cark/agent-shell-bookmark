@@ -96,3 +96,45 @@
                     (unless (equal (agent-shell-session-id) "planning")
                       (error "Restored a different session")))))))
           (unless (zerop status) (ert-fail (buffer-string))))))))
+
+(ert-deftest asb-startup-hook-error-leaves-no-running-restore ()
+  (asb-integration-with-profile
+    (let* ((origin (current-buffer)) captured process guarded
+           (agent-shell-mode-hook
+            (list (lambda ()
+                    (setq captured (current-buffer)
+                          process (map-nested-elt (agent-shell--state) '(:client :process))
+                          guarded agent-shell-bookmark-session--target)
+                    (error "Startup hook failed"))))
+           (record `("Broken startup"
+                     (handler . agent-shell-bookmark-jump)
+                     (agent-shell-bookmark-version . 1)
+                     (agent-shell-bookmark-agent . offline-bookmark)
+                     (agent-shell-bookmark-directory . ,root)
+                     (agent-shell-bookmark-session . "missing"))))
+      (let ((debug-on-error t)) (agent-shell-bookmark-jump record))
+      (should (eq origin (current-buffer)))
+      (should (bufferp captured))
+      (should-not (buffer-live-p captured))
+      (should-not (and process (process-live-p process)))
+      (should (equal guarded "missing"))
+      (when (file-exists-p log)
+        (with-temp-buffer
+          (insert-file-contents log)
+          (should-not (string-match-p "session/new\\|session/list\\|session/prompt" (buffer-string))))))))
+
+(ert-deftest asb-failure-diagnostic-survives-window-layout-changes ()
+  (asb-integration-with-profile
+    (let ((view (agent-shell-bookmark-session-start :config config :directory root :session "missing")))
+      (switch-to-buffer view)
+      (asb-integration-wait view)
+      (split-window-right)
+      (run-hooks 'window-configuration-change-hook)
+      (agent-shell--resize-header)
+      (delete-other-windows)
+      (run-hooks 'window-configuration-change-hook)
+      (agent-shell--resize-header)
+      (should (eq agent-shell-bookmark-session--status 'failed))
+      (should (string-match-p "Session unavailable" (buffer-string)))
+      (should-not (string-match-p "Loading session missing" (buffer-string)))
+      (should-not (map-nested-elt (agent-shell--state) '(:heartbeat :heartbeat-timer))))))

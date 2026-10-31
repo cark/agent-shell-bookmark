@@ -72,11 +72,18 @@ the snapshot. Update the pin with `./scripts/update-nix-lock`.
 - `agent-shell-bookmark-session.el` owns the upstream session adapter.
 - `tests/` owns fixtures and behavioral checks.
 
-The adapter uses three private upstream entry points: `agent-shell--start`,
-`agent-shell--initiate-session` and `agent-shell--initiate-session-resume-by-id`.
+The adapter uses four private upstream entry points: `agent-shell--start`,
+`agent-shell--initiate-session`, `agent-shell--initiate-session-resume-by-id`,
+and `agent-shell--update-bootstrapping-fragment`.
 It also reads the session capability state through `agent-shell--state`.
 The public start API cannot suppress focus changes or stop resume fallback.
+The fragment API keeps failures in the conversation body across header redraws.
 That is why these few private calls are isolated here.
+
+A temporary client-maker wrapper installs the buffer-local guard before
+upstream can start asynchronous work. A synchronous startup failure kills the
+partially created shell. The wrapper stops arming when startup exits, so it
+does not change the policy of later restarts.
 
 Advice is active only for this addon's pending or failed restores. Other shells
 retain upstream behavior. Successful restoration returns control to upstream.

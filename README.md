@@ -72,7 +72,7 @@ separate. The first version supports local directories and agents with unique
 configuration identifiers. Remote directories are not supported.
 
 If a directory, agent or session is unavailable, you get an ordinary message.
-An asynchronous restore failure also appears in the buffer header. Close that
+An asynchronous restore failure also appears in the conversation body. Close that
 failed buffer, fix the cause, and try the bookmark again. There is no fallback
 to another conversation and restoring a bookmark sends no prompt.
 

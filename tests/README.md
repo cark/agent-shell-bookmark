@@ -5,7 +5,8 @@
 Run `./scripts/fetch-test-deps`, then `./scripts/test`.
 
 The suite checks saved records, matching buffers, mode teardown, invalid input,
-strict restore failures and fresh-process persistence. A small Python ACP agent
+strict restore failures and fresh-process persistence. Regressions also cover
+startup-hook exceptions and failure messages surviving window layout changes. A small Python ACP agent
 exercises real upstream startup without credentials or model calls.
 
 Fixtures use temporary directories. Test libraries are pinned in

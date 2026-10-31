@@ -26,7 +26,9 @@
      (unwind-protect
          (save-window-excursion
            (switch-to-buffer buffer)
-           ,@body)
+           ;; Process-free fixtures test control flow, not upstream rendering.
+           (cl-letf (((symbol-function 'agent-shell--update-bootstrapping-fragment) #'ignore))
+             ,@body))
        (agent-shell-bookmark-mode -1)
        (when (buffer-live-p buffer) (kill-buffer buffer))
        (delete-directory directory t))))
